@@ -9,7 +9,6 @@ app.use(cors());
 app.use(express.json());
 
 // Initialize Firebase Admin SDK
-// It's good practice to add a try/catch for the service account key loading
 try {
   admin.initializeApp({
     credential: admin.credential.cert(require('./firebase-key.json')),
@@ -25,11 +24,9 @@ try {
 const db = admin.firestore();
 
 // Route for creating a new signup
-// Changed endpoint to '/api/signups' to match common frontend convention
-app.post('/api/signups', async (req, res) => { // Changed from '/signups'
+app.post('/api/signups', async (req, res) => { // Endpoint is /api/signups
   const { name, email } = req.body;
 
-  // Basic validation: ensure name and email are provided
   if (!name || !email) {
     return res.status(400).send({ error: 'Name and email are required.' });
   }
@@ -40,24 +37,23 @@ app.post('/api/signups', async (req, res) => { // Changed from '/signups'
       email,
       createdAt: admin.firestore.Timestamp.now()
     });
-    console.log(`New signup created with ID: ${docRef.id}`); // Log success
-    res.status(200).send({ id: docRef.id, message: "Signup successful!" }); // Added message for clarity
+    console.log(`New signup created with ID: ${docRef.id}`);
+    res.status(200).send({ id: docRef.id, message: "Signup successful!" });
   } catch (error) {
-    console.error("Error creating signup:", error); // Log the actual error
+    console.error("Error creating signup:", error);
     res.status(500).send({ error: error.message });
   }
 });
 
 // Route for getting all signups
-// Changed endpoint to '/api/signups' to match common frontend convention
-app.get('/api/signups', async (req, res) => { // Changed from '/signups'
+app.get('/api/signups', async (req, res) => { // Endpoint is /api/signups
   try {
     const snapshot = await db.collection('signups').orderBy('createdAt', 'desc').get();
     const signups = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    console.log(`Fetched ${signups.length} signups.`); // Log success
+    console.log(`Fetched ${signups.length} signups.`);
     res.status(200).send(signups);
   } catch (error) {
-    console.error("Error fetching signups:", error); // Log the actual error
+    console.error("Error fetching signups:", error);
     res.status(500).send({ error: error.message });
   }
 });
