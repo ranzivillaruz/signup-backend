@@ -11,7 +11,7 @@ app.use(express.json());
 // Initialize Firebase Admin SDK
 try {
   admin.initializeApp({
-    credential: admin.credential.cert(require('./firebase-key.json')),
+    credential: admin.credential.cert(require('./etc/secrets/firebase-key.json')),
   });
   console.log("Firebase Admin SDK initialized successfully.");
 } catch (error) {
